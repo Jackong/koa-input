@@ -1,0 +1,38 @@
+{
+  "name": "koa-input",
+  "version": "1.0.0",
+  "description": "a middleware for koa to validate input (query, param and body)",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --harmony test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jackong/koa-input.git"
+  },
+  "keywords": [
+    "koa",
+    "middleware",
+    "query",
+    "param",
+    "body",
+    "input",
+    "validate",
+    "validator",
+    "check"
+  ],
+  "author": "jackong <jackongc@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jackong/koa-input/issues"
+  },
+  "homepage": "https://github.com/Jackong/koa-input",
+  "devDependencies": {
+    "chai": "^3.1.0",
+    "co": "^4.6.0",
+    "koa": "^0.21.0",
+    "koa-bodyparser": "^2.0.0",
+    "mocha": "^2.2.5",
+    "supertest-koa-agent": "^0.2.1"
+  }
+}
