@@ -317,9 +317,9 @@ describe('input with multiple patterns', function () {
     var app = koa();
     app.use(onError);
     app.use(input('query', 'type', ['cat', 'dog']));
-    app.use(input('query', 'type', {cat: true, dog: false}));
+    app.use(input('query', 'type', {cat: 1, dog: 2}));
     app.use(input('query', 'type', function (value) {
-        return value ? 1 : 0;
+        return value;
     }));
 
     app.use(function *() {
@@ -401,7 +401,7 @@ describe('input for params', function () {
     var router = Router();
 
     router.get('/users/:id', input('params', 'id', function (value) {
-        return value > 0 ? parseInt(value) + 1 : undefined;
+        return value > 0;
     }), function *(next) {
         expect(this.params.id).to.be.equal(this.request.params.id);
         expect(this.params).to.be.equal(this.request.params);
@@ -421,7 +421,7 @@ describe('input for params', function () {
     it('should response success if match', function (done) {
         request(app)
             .get('/users/1')
-            .expect(200, '2')
+            .expect(200, '1')
             .end(done);
     });
 });
