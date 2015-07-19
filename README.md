@@ -1,13 +1,30 @@
-# Introduce
-* A middleware for koa to validate the input (query, params, body and headers etc.)
-* Stop to write CIERR(Check-If-Error-Return-Repeatedly) style code, it can be done automatically!
+# koa-input
+============
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![David deps][david-image]][david-url]
+[![node version][node-image]][node-url]
+[![Gittip][gittip-image]][gittip-url]
+
+[npm-image]: https://img.shields.io/npm/v/koa-input.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/koa-input
+[travis-image]: https://travis-ci.org/Jackong/koa-input.svg?branch=master
+[travis-url]: https://travis-ci.org/Jackong/koa-input
+[david-image]: https://img.shields.io/david/Jackong/koa-input.svg?style=flat-square
+[david-url]: https://david-dm.org/Jackong/koa-input
+[node-image]: https://img.shields.io/badge/node.js-%3E=_0.11-green.svg?style=flat-square
+[node-url]: http://nodejs.org/download/
+[gittip-image]: https://img.shields.io/gratipay/Jackong.svg
+[gittip-url]: https://gratipay.com/~Jackong
+
+### A middleware for koa to validate the input (query, params, body and headers etc.)
+Stop to write CIERR(Check-If-Error-Return-Repeatedly) style code, it can be done automatically!
 
 # Install
-```shell
-npm install koa-input
-```
 
-# Example
+[![NPM](https://nodei.co/npm/koa-input.png?downloads=true)](https://nodei.co/npm/koa-input/)
+
+# Usage
 * Quick start
 ```js
 var app = require('koa')();
@@ -94,3 +111,6 @@ app.use(input('query', 'name', undefined, undefined, 'invalid input'));
 //see also, it may be easer to read
 app.use(input.source('query').name('name').error('invalid input').build());
 ```
+## Licences
+
+[MIT](LICENSE)
