@@ -286,6 +286,32 @@ describe('input with array pattern', function () {
     });
 });
 
+describe('input with basic type pattern', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', 'type', 'cat'));
+
+    app.use(function *() {
+        this.body = this.request.query.type
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'pig'})
+            .expect(400, 'Invalid input type from query')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'cat'})
+            .expect(200, 'cat')
+            .end(done);
+    });
+});
+
 describe('input with multiple patterns', function () {
     var app = koa();
     app.use(onError);
@@ -314,8 +340,4 @@ describe('input with multiple patterns', function () {
             .expect(200, '1')
             .end(done);
     });
-});
-
-describe('input with promise pattern', function () {
-
 });
