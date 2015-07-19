@@ -207,7 +207,31 @@ describe('input without pattern', function () {
 });
 
 describe('input with function pattern', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', 'age', function (value) {
+        return value >= 18 ? value : undefined;
+    }));
 
+    app.use(function *() {
+        this.body = this.request.query.age
+    });
+    
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .query({age: 17})
+            .expect(400, 'Invalid input age from query')
+            .end(done);
+    });
+    
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({age: 18})
+            .expect(200, '18')
+            .end(done);
+    });
 });
 
 describe('input with object pattern', function () {
