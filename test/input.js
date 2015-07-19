@@ -36,37 +36,88 @@ describe('input name not found', function () {
                 .expect(400, 'Invalid input name from query')
                 .end(done);
         });
+    });
+});
 
-        it('should response error when input is invalid', function (done) {
+describe('input invalid value', function () {
+    describe('with default value', function () {
+        var app = koa();
+        app.use(input('query', 'name', /^[a-zA-Z]+$/, 'default'));
+        app.use(function *() {
+            this.body = this.request.query.name
+        });
+
+        it('should get the default value', function (done) {
+            request(app)
+                .get('/')
+                .query({name: 111})
+                .expect('default')
+                .end(done);
+        })
+    });
+
+    describe('without default value', function () {
+        var app = koa();
+        app.use(input('query', 'name', /^[a-zA-Z]+$/));
+        app.use(function *() {
+            this.body = this.request.query.name
+        });
+
+        it('should response error', function (done) {
             request(app)
                 .get('/')
                 .query({name: 111})
                 .expect(400, 'Invalid input name from query')
                 .end(done);
         });
+    });
+});
 
-        it('should response success when input is valid', function (done) {
-            request(app)
-                .get('/')
-                .query({name: 'jackong'})
-                .expect('jackong')
-                .end(done);
+describe('input with custom error handler', function () {
+    var defaultError = input.error;
+    before(function () {
+        input.error = function (source, name) {
+            var error = new Error(util.format('Invalid get %s from %s', name, source));
+            error.status = 200;
+            error.code = 77;
+            return error;
+        };
+    });
+
+    after(function () {
+        input.error = defaultError;
+    });
+
+    var app = koa();
+    app.use(input('query', 'name', /^[a-zA-Z]+$/));
+    app.use(function *() {
+        this.body = this.request.query.name
+    });
+
+    it('should response custom error', function (done) {
+        request(app)
+            .get('/')
+            .expect(200, 'Invalid get name from query')
+            .end(done);
+    });
+});
+
+describe('input with special error', function () {
+    describe('type of string', function () {
+        var app = koa();
+        app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined));
+        app.use(function *() {
+            this.body = this.request.query.name
         });
     });
-});
 
-describe('input invalid value', function () {
-    describe('with default value', function () {
+    describe('type of number', function () {
 
     });
 
-    describe('without default value', function () {
+    describe('type of object', function () {
 
     });
-
-});
-describe('input with customer error handler', function () {
-
 });
 
 describe('input valid value', function () {
