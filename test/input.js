@@ -347,7 +347,30 @@ describe('input for params', function () {
 });
 
 describe('input for body', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(bodyParser());
+    app.use(input('body', 'age', /^[1-9]$/));
 
+    app.use(function *() {
+        this.body = this.request.body.age
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .post('/')
+            .send({age: 0})
+            .expect(400, 'Invalid input age from body')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .post('/')
+            .send({age: 1})
+            .expect(200, '1')
+            .end(done);
+    });
 });
 
 describe('input for headers', function () {
