@@ -104,19 +104,64 @@ describe('input with custom error handler', function () {
 
 describe('input with special error', function () {
     describe('type of string', function () {
+        var msg = 'Your name can not empty';
         var app = koa();
-        app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined));
+        app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, msg));
         app.use(function *() {
             this.body = this.request.query.name
+        });
+        it('should response custom msg', function (done) {
+            request(app)
+                .get('/')
+                .expect(400, msg)
+                .end(done);
         });
     });
 
     describe('type of number', function () {
-
+        var status = 200;
+        var app = koa();
+        app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, status));
+        app.use(function *() {
+            this.body = this.request.query.name
+        });
+        it('should response custom status', function (done) {
+            request(app)
+                .get('/')
+                .expect(status, 'Invalid input name from query')
+                .end(done);
+        });
     });
 
     describe('type of object', function () {
+        var err = {status: 200, message: 'Your name can not empty'};
+        var app = koa();
+        app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, err));
+        app.use(function *() {
+            this.body = this.request.query.name
+        });
+        it('should response custom error', function (done) {
+            request(app)
+                .get('/')
+                .expect(err.status, err.message)
+                .end(done);
+        });
+    });
 
+    describe('instance of Error', function () {
+        var err = new Error('Your name can not empty');
+        err.status = 200;
+        var app = koa();
+        app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, err));
+        app.use(function *() {
+            this.body = this.request.query.name
+        });
+        it('should response custom error', function (done) {
+            request(app)
+                .get('/')
+                .expect(err.status, err.message)
+                .end(done);
+        });
     });
 });
 
