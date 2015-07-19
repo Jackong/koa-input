@@ -9,9 +9,19 @@ var bodyParser = require('koa-bodyparser');
 var input = require('../lib/input');
 var util = require('util');
 
+var onError = function *(next) {
+  try{
+      yield next;
+  } catch (err) {
+      this.status = err.status;
+      this.body = err.message;
+  }
+};
+
 describe('input name not found', function () {
     describe('with default value', function () {
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', undefined, 'default'));
         app.use(function *() {
             this.body = this.request.query.name
@@ -26,6 +36,7 @@ describe('input name not found', function () {
 
     describe('without default value', function () {
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/));
         app.use(function *() {
             this.body = this.request.query.name
@@ -42,6 +53,7 @@ describe('input name not found', function () {
 describe('input invalid value', function () {
     describe('with default value', function () {
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/, 'default'));
         app.use(function *() {
             this.body = this.request.query.name
@@ -58,6 +70,7 @@ describe('input invalid value', function () {
 
     describe('without default value', function () {
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/));
         app.use(function *() {
             this.body = this.request.query.name
@@ -89,6 +102,7 @@ describe('input with custom error handler', function () {
     });
 
     var app = koa();
+    app.use(onError);
     app.use(input('query', 'name', /^[a-zA-Z]+$/));
     app.use(function *() {
         this.body = this.request.query.name
@@ -106,6 +120,7 @@ describe('input with special error', function () {
     describe('type of string', function () {
         var msg = 'Your name can not empty';
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, msg));
         app.use(function *() {
             this.body = this.request.query.name
@@ -121,6 +136,7 @@ describe('input with special error', function () {
     describe('type of number', function () {
         var status = 200;
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, status));
         app.use(function *() {
             this.body = this.request.query.name
@@ -136,6 +152,7 @@ describe('input with special error', function () {
     describe('type of object', function () {
         var err = {status: 200, message: 'Your name can not empty'};
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, err));
         app.use(function *() {
             this.body = this.request.query.name
@@ -152,6 +169,7 @@ describe('input with special error', function () {
         var err = new Error('Your name can not empty');
         err.status = 200;
         var app = koa();
+        app.use(onError);
         app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, err));
         app.use(function *() {
             this.body = this.request.query.name
