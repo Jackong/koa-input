@@ -6,6 +6,7 @@ var expect = require('chai').expect;
 var request = require('supertest-koa-agent');
 var koa = require('koa');
 var bodyParser = require('koa-bodyparser');
+var Router = require('koa-router');
 var input = require('../lib/input');
 var util = require('util');
 
@@ -342,10 +343,6 @@ describe('input with multiple patterns', function () {
     });
 });
 
-describe('input for params', function () {
-
-});
-
 describe('input for body', function () {
     var app = koa();
     app.use(onError);
@@ -395,6 +392,36 @@ describe('input for headers', function () {
             .get('/')
             .set('version', 1)
             .expect(200, '1')
+            .end(done);
+    });
+});
+
+describe('input for params', function () {
+    var app = koa();
+    var router = Router();
+
+    router.get('/users/:id', input('params', 'id', function (value) {
+        return value > 0 ? parseInt(value) + 1 : undefined;
+    }), function *(next) {
+        expect(this.params.id).to.be.equal(this.request.params.id);
+        expect(this.params).to.be.equal(this.request.params);
+        this.body = this.params.id
+    });
+
+    app.use(onError);
+    app.use(router.routes());
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/users/0')
+            .expect(400, 'Invalid input id from params')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/users/1')
+            .expect(200, '2')
             .end(done);
     });
 });
