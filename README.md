@@ -1,13 +1,14 @@
-# koa-input
-A middleware for koa to validate the input (query, params, body and headers etc.)
+# Introduce
+* A middleware for koa to validate the input (query, params, body and headers etc.)
+* Stop to write CIERR(Check-If-Error-Return-Repeatedly) style code, it can be done automatically!
 
-# install
+# Install
 ```shell
 npm install koa-input
 ```
 
-# example
-* quick start
+# Example
+* Quick start
 ```js
 var app = require('koa')();
 var input = require('koa-input');
@@ -17,7 +18,7 @@ app.use(function *() {
 });
 ```
 
-* support query, params([koa-router](https://github.com/alexmingoia/koa-router)), body([koa-bodyparser](https://github.com/koajs/bodyparser)) and headers etc.
+* Support query, params([koa-router](https://github.com/alexmingoia/koa-router)), body([koa-bodyparser](https://github.com/koajs/bodyparser)) and headers etc.
 ```js
 var app = require('koa')();
 var input = require('koa-input');
@@ -41,7 +42,7 @@ app.use(function *() {
 });
 ```
 
-* support custom error handler
+* Support custom error handler
 ```js
 input.error = function (source, name) {
     var error = new Error(util.format('Invalid get %s from %s', name, source));
@@ -49,32 +50,28 @@ input.error = function (source, name) {
     error.code = 77;
     return error;
 };
-//...
-app.use(...);
 ```
 
-* support special error (Number(status), String(message), Object(extend by input.error()))
+* Support special error
 ```js
-//...
+//String as error.message
 app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, 'invalid query name'));
-//...
+//Number as error.status
 app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, 400));
-//...
+//Object will be extended by input.error()
 app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, {status: 400, message: 'invalid query name'}));
-//...
+//The same as Object
 app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, new Error('invalid query name')));
 ```
 
-* support default value as an optional input
+* Support default value as an optional input
 ```js
 app.use(input('query', 'type', /^(cat|dog)$/, 'defaultValue'));
 ```
-* support Regex, Function, Object, Array, Basic-Type pattern to validate the input
+* Support Regex, Function, Object, Array, Basic-Type pattern to validate the input
 ```js
 //Function(you can use any other module like validator)
-app.use(input('query', 'age', function (value) {
-    return value >= 18;
-}));
+app.use(input('query', 'email', validator.isEmail));
 //Object(it will get the value if match the key)
 app.use(input('query', 'status', {'normal': 0, 'invalid': 1}));
 //Array(it must be element of the array)
@@ -82,7 +79,7 @@ app.use(input('query', 'type', ['cat', 'dog']));
 //String(it must be equal to)
 app.use(input('query', 'type', 'cat'));
 ```
-* support multiple patterns
+* Support multiple patterns
 ```js
 app.use(input('query', 'type', ['cat', 'dog']));
 app.use(input('query', 'type', {cat: 1, dog: 2}));
@@ -90,7 +87,7 @@ app.use(input('query', 'type', function (value) {
     return value === 'cat';
 }));
 ```
-* support builder
+* Support builder
 ```js
 //if you want to ignore some middle-arguments:
 app.use(input('query', 'name', undefined, undefined, 'invalid input'));
