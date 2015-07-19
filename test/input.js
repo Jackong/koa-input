@@ -183,16 +183,27 @@ describe('input with special error', function () {
     });
 });
 
-describe('input valid value', function () {
-
-});
-
 describe('input without pattern', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', 'name'));
+    app.use(function *() {
+        this.body = this.request.query.name
+    });
+    it('should success when input found', function (done) {
+        request(app)
+            .get('/')
+            .query({name: 'jackong'})
+            .expect(200, 'jackong')
+            .end(done);
+    });
 
-});
-
-describe('input with regex pattern', function () {
-
+    it('should response error when input not found', function (done) {
+        request(app)
+            .get('/')
+            .expect(400, 'Invalid input name from query')
+            .end(done);
+    });
 });
 
 describe('input with function pattern', function () {
