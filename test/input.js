@@ -286,12 +286,34 @@ describe('input with array pattern', function () {
     });
 });
 
-describe('input with instance pattern', function () {
-
-});
-
 describe('input with multiple patterns', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', 'type', ['cat', 'dog']));
+    app.use(input('query', 'type', {cat: true, dog: false}));
+    app.use(input('query', 'type', function (value) {
+        return value ? 1 : 0;
+    }));
 
+    app.use(function *() {
+        this.body = this.request.query.type
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'pig'})
+            .expect(400, 'Invalid input type from query')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'cat'})
+            .expect(200, '1')
+            .end(done);
+    });
 });
 
 describe('input with promise pattern', function () {
