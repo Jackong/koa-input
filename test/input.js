@@ -425,3 +425,27 @@ describe('input for params', function () {
             .end(done);
     });
 });
+
+describe('input using builder', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input.source('query').name('type').pattern(/^(cat|dog)$/).default('pig').build());
+    app.use(function *() {
+        this.body = this.request.query.type
+    });
+
+    it('should response success using default', function (done) {
+        request(app)
+            .get('/')
+            .expect(200, 'pig')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'cat'})
+            .expect(200, 'cat')
+            .end(done);
+    });
+});
