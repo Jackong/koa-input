@@ -235,7 +235,29 @@ describe('input with function pattern', function () {
 });
 
 describe('input with object pattern', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', 'status', {'normal': 0, 'invalid': 1}));
 
+    app.use(function *() {
+        this.body = this.request.query.status
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .query({status: 'unknown'})
+            .expect(400, 'Invalid input status from query')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({status: 'normal'})
+            .expect(200, '0')
+            .end(done);
+    });
 });
 
 describe('input with array pattern', function () {
