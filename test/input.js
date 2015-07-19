@@ -341,3 +341,37 @@ describe('input with multiple patterns', function () {
             .end(done);
     });
 });
+
+describe('input for params', function () {
+
+});
+
+describe('input for body', function () {
+
+});
+
+describe('input for headers', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('headers', 'version', /^[1-9]$/));
+
+    app.use(function *() {
+        this.body = this.request.headers.version
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .set('version', 0)
+            .expect(400, 'Invalid input version from headers')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .set('version', 1)
+            .expect(200, '1')
+            .end(done);
+    });
+});
