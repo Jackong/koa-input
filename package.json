@@ -1,6 +1,6 @@
 {
   "name": "koa-input",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "a middleware for koa to validate input (query, param and body)",
   "main": "index.js",
   "scripts": {
