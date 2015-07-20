@@ -1,5 +1,5 @@
 # koa-input
-============
+
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![David deps][david-image]][david-url]
@@ -30,6 +30,8 @@ Stop to write CIERR(Check-If-Error-Return-Repeatedly) style code, it can be done
 var app = require('koa')();
 var input = require('koa-input');
 app.use(input('query', 'name', /^[a-zA-Z]+$/, 'default value', 'Your name is invalid'));
+//same as:
+//app.use(input.query('name', /^[a-zA-Z]+$/, 'default value', 'Your name is invalid'));
 app.use(function *() {
     this.body = this.request.query.name
 });
@@ -83,8 +85,15 @@ app.use(input('query', 'name', /^[a-zA-Z]+$/, undefined, new Error('invalid quer
 
 * Support default value as an optional input
 ```js
-app.use(input('query', 'type', /^(cat|dog)$/, 'defaultValue'));
+//set a not-`undefined` default value (function will be call and using it's return value)
+app.use(input('query', 'type', /^(cat|dog)$/, 'dog'));
+app.use(input('query', 'time', /^[0-9]{13}$/, Date.now));
+
+app.use(input('query', 'type', /^(cat|dog)$/, null));//you can pass `null` if you want a `nil` default value
+//or
+app.use(input('query', 'type', /^(cat|dog)$/, function() {}));//just pass an empty function to get a `undefined` as default value
 ```
+
 * Support Regex, Function, Object, Array, Basic-Type pattern to validate the input
 ```js
 //Function(you can use any other module like validator)
@@ -96,6 +105,7 @@ app.use(input('query', 'type', ['cat', 'dog']));
 //String(it must be equal to)
 app.use(input('query', 'type', 'cat'));
 ```
+
 * Support multiple patterns
 ```js
 app.use(input('query', 'type', ['cat', 'dog']));
@@ -104,6 +114,7 @@ app.use(input('query', 'type', function (value) {
     return value === 'cat';
 }));
 ```
+
 * Support builder
 ```js
 //if you want to ignore some middle-arguments:
@@ -111,6 +122,7 @@ app.use(input('query', 'name', undefined, undefined, 'invalid input'));
 //see also, it may be easer to read
 app.use(input.source('query').name('name').error('invalid input').build());
 ```
-## Licences
+
+# Licences
 
 [MIT](LICENSE)

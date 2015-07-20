@@ -449,3 +449,31 @@ describe('input using builder', function () {
             .end(done);
     });
 });
+
+describe('input with function default', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', 'time', /^[0-9]{13}$/, Date.now));
+
+    app.use(function *() {
+        this.body = this.request.query.time
+    });
+
+    it('should response default value if un-match', function (done) {
+        request(app)
+            .get('/')
+            .expect(200)
+            .expect(function (res) {
+                expect(res.body).to.be.at.most(Date.now());
+            })
+            .end(done);
+    });
+
+    it('should response value sent if match', function (done) {
+        request(app)
+            .get('/')
+            .query({time: 1234567890123})
+            .expect(200, '1234567890123')
+            .end(done);
+    });
+});
