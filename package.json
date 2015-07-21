@@ -37,6 +37,7 @@
     "supertest-koa-agent": "^0.2.1"
   },
   "dependencies": {
+    "no-input": "^1.0.2",
     "underscore": "^1.8.3"
   }
 }

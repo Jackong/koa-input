@@ -45,7 +45,7 @@ describe('input name not found', function () {
         it('should response error when input not found', function (done) {
             request(app)
                 .get('/')
-                .expect(400, 'Invalid input name from query')
+                .expect(400, 'Invalid input name')
                 .end(done);
         });
     });
@@ -81,7 +81,7 @@ describe('input invalid value', function () {
             request(app)
                 .get('/')
                 .query({name: 111})
-                .expect(400, 'Invalid input name from query')
+                .expect(400, 'Invalid input name')
                 .end(done);
         });
     });
@@ -90,16 +90,16 @@ describe('input invalid value', function () {
 describe('input with custom error handler', function () {
     var defaultError = input.error;
     before(function () {
-        input.error = function (source, name) {
-            var error = new Error(util.format('Invalid get %s from %s', name, source));
+        input.onError(function (name) {
+            var error = new Error(util.format('Invalid get %s', name));
             error.status = 200;
             error.code = 77;
             return error;
-        };
+        });
     });
 
     after(function () {
-        input.error = defaultError;
+        input.onError(defaultError);
     });
 
     var app = koa();
@@ -112,7 +112,7 @@ describe('input with custom error handler', function () {
     it('should response custom error', function (done) {
         request(app)
             .get('/')
-            .expect(200, 'Invalid get name from query')
+            .expect(200, 'Invalid get name')
             .end(done);
     });
 });
@@ -145,7 +145,7 @@ describe('input with special error', function () {
         it('should response custom status', function (done) {
             request(app)
                 .get('/')
-                .expect(status, 'Invalid input name from query')
+                .expect(status, 'Invalid input name')
                 .end(done);
         });
     });
@@ -167,7 +167,7 @@ describe('input with special error', function () {
     });
 
     describe('instance of Error', function () {
-        var err = new Error('Your name can not empty');
+        var err = new input.InvalidInputError('Your name can not empty');
         err.status = 200;
         var app = koa();
         app.use(onError);
@@ -202,7 +202,7 @@ describe('input without pattern', function () {
     it('should response error when input not found', function (done) {
         request(app)
             .get('/')
-            .expect(400, 'Invalid input name from query')
+            .expect(400, 'Invalid input name')
             .end(done);
     });
 });
@@ -222,7 +222,7 @@ describe('input with function pattern', function () {
         request(app)
             .get('/')
             .query({age: 17})
-            .expect(400, 'Invalid input age from query')
+            .expect(400, 'Invalid input age')
             .end(done);
     });
     
@@ -248,7 +248,7 @@ describe('input with object pattern', function () {
         request(app)
             .get('/')
             .query({status: 'unknown'})
-            .expect(400, 'Invalid input status from query')
+            .expect(400, 'Invalid input status')
             .end(done);
     });
 
@@ -274,7 +274,7 @@ describe('input with array pattern', function () {
         request(app)
             .get('/')
             .query({type: 'pig'})
-            .expect(400, 'Invalid input type from query')
+            .expect(400, 'Invalid input type')
             .end(done);
     });
 
@@ -300,7 +300,7 @@ describe('input with basic type pattern', function () {
         request(app)
             .get('/')
             .query({type: 'pig'})
-            .expect(400, 'Invalid input type from query')
+            .expect(400, 'Invalid input type')
             .end(done);
     });
 
@@ -330,7 +330,7 @@ describe('input with multiple patterns', function () {
         request(app)
             .get('/')
             .query({type: 'pig'})
-            .expect(400, 'Invalid input type from query')
+            .expect(400, 'Invalid input type')
             .end(done);
     });
 
@@ -357,7 +357,7 @@ describe('input for body', function () {
         request(app)
             .post('/')
             .send({age: 0})
-            .expect(400, 'Invalid input age from body')
+            .expect(400, 'Invalid input age')
             .end(done);
     });
 
@@ -383,7 +383,7 @@ describe('input for headers', function () {
         request(app)
             .get('/')
             .set('version', 0)
-            .expect(400, 'Invalid input version from headers')
+            .expect(400, 'Invalid input version')
             .end(done);
     });
 
@@ -414,7 +414,7 @@ describe('input for params', function () {
     it('should response error if un-match', function (done) {
         request(app)
             .get('/users/0')
-            .expect(400, 'Invalid input id from params')
+            .expect(400, 'Invalid input id')
             .end(done);
     });
 

@@ -63,12 +63,12 @@ app.use(function *() {
 
 * Support custom error handler
 ```js
-input.error = function (source, name) {
-    var error = new Error(util.format('Invalid get %s from %s', name, source));
+input.onError(function (name) {
+    var error = new Error(util.format('Invalid get %s', name));
     error.status = 200;
     error.code = 77;
     return error;
-};
+});
 ```
 
 * Support special error
@@ -122,6 +122,8 @@ app.use(input('query', 'name', undefined, undefined, 'invalid input'));
 //see also, it may be easer to read
 app.use(input.source('query').name('name').error('invalid input').build());
 ```
+
+* Dependence on [no-input](http://github.com/Jackong/no-input)
 
 # Licences
 
