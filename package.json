@@ -1,6 +1,6 @@
 {
   "name": "koa-input",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "a middleware for koa to validate input (query, param and body)",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "supertest-koa-agent": "^0.2.1"
   },
   "dependencies": {
-    "no-input": "^1.0.2",
+    "no-input": "^1.0.3",
     "underscore": "^1.8.3"
   }
 }

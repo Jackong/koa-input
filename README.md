@@ -115,12 +115,16 @@ app.use(input('query', 'type', function (value) {
 }));
 ```
 
-* Support builder
+* Support builder or object options
 ```js
 //if you want to ignore some middle-arguments:
 app.use(input('query', 'name', undefined, undefined, 'invalid input'));
-//see also, it may be easer to read
+//OR
 app.use(input.source('query').name('name').error('invalid input').build());
+//OR
+app.use(input({source: 'query', name: 'name', error: 'invalid input'}));
+//OR
+app.use(input('query', {name: 'name', error: 'invalid input'}));
 ```
 
 * Dependence on [no-input](http://github.com/Jackong/no-input)

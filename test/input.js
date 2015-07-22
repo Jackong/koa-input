@@ -477,3 +477,55 @@ describe('input with function default', function () {
             .end(done);
     });
 });
+
+describe('input with object source', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input({source: 'query', name: 'type', pattern: ['cat', 'dog']}));
+
+    app.use(function *() {
+        this.body = this.request.query.type
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'pig'})
+            .expect(400, 'Invalid input type')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'cat'})
+            .expect(200, 'cat')
+            .end(done);
+    });
+});
+
+describe('input with object name', function () {
+    var app = koa();
+    app.use(onError);
+    app.use(input('query', {name: 'type', pattern: ['cat', 'dog']}));
+
+    app.use(function *() {
+        this.body = this.request.query.type
+    });
+
+    it('should response error if un-match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'pig'})
+            .expect(400, 'Invalid input type')
+            .end(done);
+    });
+
+    it('should response success if match', function (done) {
+        request(app)
+            .get('/')
+            .query({type: 'cat'})
+            .expect(200, 'cat')
+            .end(done);
+    });
+});
